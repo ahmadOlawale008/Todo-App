@@ -1,0 +1,14 @@
+{% extends 'base/nav.html' %}
+{% block todoTitle %} <title>Edit Task</title> {% endblock %}
+
+{% block body_block %}
+<div class="container-fluid">
+    <div class="wrap-content">
+        <form method="post" class="form-group">
+            {% csrf_token %}
+            {{form.as_p}}
+            <button type="submit" class="btn btn-primary">Add to task</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends 'base/nav.html' %}
+{% block todoTitle %} <title>Register</title> {% endblock %}
+{% block body_block %}
+<div class="container-fluid">
+    <header>
+        <h2 class="h2">Sign up</h2>
+    </header>
+    <div class="wrap-content">
+        <form method="post" class="form form-group">
+            {% csrf_token %}
+            <p>
+                <label for="username">Username:</label>
+                <input type="text" placeholder="Username" name="username" id="" class="form-control">
+            </p>
+            <p>
+                <label for="email">Email</label>
+                <input placeholder="Email" class="form-control email" type="email" name="email" id="">
+            </p>
+            <p>
+                <label for="password">Password</label>
+                <input type="password" class="form-control" name="password" id="" placeholder="Password">
+            </p>
+            <p>
+                <label for="confirmPassword">Confirm Password</label>
+                <input type="password" class="form-control" name="confirmPassword" placeholder="Confirm Password" id="">
+            </p>
+            <p>
+                Do you have an account?
+                <a href="/login/">Sign in</a>
+            </p>
+            <button type="submit" class="btn btn-outline-primary">Sign up</button>
+        </form>
+    </div>
+</div>
+{% endblock %}

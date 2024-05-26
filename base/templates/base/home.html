@@ -1,0 +1,194 @@
+{% extends 'base/nav.html' %}
+{% block todoTitle %} <title>Home Page</title> {% endblock %}
+{% block body_block %}
+<style>
+    html{
+        position: relative;
+        width: 100%;
+    }
+    .material-symbols-outlined{
+        font-size: 1rem;
+    }
+    .alert{
+
+    }
+    a{
+        color: #000;
+    }
+    table{
+        width: 100%;
+    }
+    #myAlert{
+        position: absolute;
+    width: 100%;
+    max-width: 40%;
+    left: 31%;
+    top: 40%;
+    display: none;
+    z-index: 2;
+    }
+    #myAlert.active{
+        display: block;
+    }
+</style>
+<div  class='container-fluid'>
+<div class="">
+    <div class="wrap-content-container mt-3">
+        <div class="">
+            <div class="add-btn d-flex">
+                <button class="btn btn-secondary d-flex align-items-center ms-auto my-2">
+                    <a style="text-decoration: none; color: #000;" href="{% url 'basic_app:addTask' %}">
+                        <span class="material-symbols-outlined">
+                            add
+                            </span>
+                            Add to task    
+                    </a></button>
+            </div>
+            <div class="filter-btn mb-2">
+                <div class="dropdown">
+                    <button class="btn btn-outline-secondary dropdown-toggle" data-bs-toggle="dropdown" aria-label="false">
+                        <span class="material-symbols-outlined">
+                            filter_list
+                            </span>
+                        Filter
+                    </button>
+                    <ul class="dropdown-menu">
+                        <li>
+                            <a href="" class="dropdown-item">Important</a>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            <div class="table table-responsive">
+                <table class="table">
+                    <thead class="bg-light">
+                        <tr>
+                            <th>
+                                Title
+                            </th>
+                            <th style="cursor: pointer;" class="dropdown dropdown-toggle" data-bs-toggle="dropdown" aria-label="false">
+                                Deadline
+                                <span class="caret"></span>
+                                <ul class="dropdown-menu">
+                                <li class="dropdown-item">Today</li>
+                                <li class="divider"></li>
+                                <li class="dropdown-item">Add to date</li>
+                                </ul>
+                            </th>
+                            <th>Day's left</th>
+                            <th>Content</th>
+                            <th>Edit</th>
+                            <th>Delete</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for task in tasks %}
+                        <tr>
+                            <td>
+                                {{task.title}}
+                               </div>
+                            </td>
+                            <td class="timer">{% if task.time == None %}No deadline given{% else %} {{task.time|date}} {% endif %}</td>
+                            <td class="text-danger days-left">
+                                <div class="spinner-border"></div>
+                            </td>
+                            <td>{{task.description|truncatewords:11|linebreaks}}</td>
+                            <td><button class="btn btn-outline-primary">
+                                <a class="d-flex align-items-center" style="text-decoration: none; color: #000;" href="{% url 'basic_app:editTask' task.id %}">
+                                    <span class="material-symbols-outlined">
+                                        edit
+                                    </span>
+                                    Edit
+                                </a>
+                                </button></td>
+                            <td><button class="btn delete-task d-flex align-items-center btn-danger"><span class="material-symbols-outlined">delete</span>
+                                Delete</button></td>
+
+                        </tr>
+
+                        <div id="myAlert" class="alert shadow alert-warning">
+                            <a href="#" class="close close-text-alert mb-1 text-decoration-none d-flex align-items-center" data-dismiss="alert">
+                               <span  style="font-size: 1.5rem;" class="material-symbols-outlined">
+                                   cancel
+                                   </span>
+                            </a>
+                            <strong>Warning!</strong> 
+                            <form action="{% url 'basic_app:deleteTask' task.id %}" method="post">
+                                {% csrf_token %}
+                               <span>Are you sure you want to delete</span>
+                               <button type="submit" class="btn btn-danger">Delete</button>
+                            </form>
+                           
+                           </div>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+{% block javascriptCode %} <script type="text/javascript">
+const timer = document.querySelectorAll('.timer')
+const daysLeft = document.querySelectorAll('.days-left')
+    function counter(datePlaced){
+
+    const datePlacedVal = new Date(datePlaced)
+    const datePlacedMillisecs = datePlacedVal.getTime()
+    
+    const presentDate = new Date()
+    const presentDateMillisecs = presentDate.getTime()
+    const milliIntevral = datePlacedMillisecs - presentDateMillisecs
+    const IntervalSeconds = milliIntevral / 1000
+    
+    const days = Math.floor(IntervalSeconds / 3600 / 24)
+    const hours = Math.floor(IntervalSeconds / 3600) % 24
+    const mins = Math.floor(IntervalSeconds / 60) % 60
+    const seconds = Math.floor(IntervalSeconds) % 60
+    if(datePlacedVal == presentDate || datePlacedVal < presentDate){
+        return 'Time up'
+    }
+    else{
+        return `${days} days, ${hours}hrs:${mins}mins:${seconds} sec left` 
+    }
+}
+timer.forEach((element, index)=>{
+    const val = element.innerHTML
+    setInterval(function(){
+        console.log(val)
+        if(val != 'No deadline given'){
+            const daysLeftVal = counter(val)
+        if(daysLeftVal === 'Time up'){
+            daysLeft[index].innerHTML = 'Completed'
+            daysLeft[index].classList.remove('text-danger')
+            daysLeft[index].classList.add('text-success')
+
+        }
+        daysLeft[index].innerHTML = daysLeftVal     
+        }else{
+        daysLeft[index].innerHTML = 'No deadline given'     
+
+        }
+
+    }, 1000)
+})
+const deleteBtn = document.querySelectorAll('#myAlert')
+const deleteTaskBtn = document.querySelectorAll('.delete-task')
+const cancelDeleteBtn = document.querySelectorAll('.close-text-alert')
+let currentBtn = 'closed'
+deleteTaskBtn.forEach((element, index)=>{
+    element.addEventListener('click', ()=>{
+        
+    deleteBtn[index].classList.add('active')
+    console.log(index)
+})
+
+})
+cancelDeleteBtn.forEach((element, index)=>{
+    element.addEventListener('click', ()=>{
+    deleteBtn[index].classList.remove('active')
+
+    })
+})
+</script> {% endblock %}
+
+{% endblock %}

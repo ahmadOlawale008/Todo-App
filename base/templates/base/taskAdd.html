@@ -1,0 +1,17 @@
+{% extends 'base/nav.html' %}
+{% block todoTitle %} <title>Add to Task</title> {% endblock %}
+
+{% block body_block %}
+<div class="container-fluid">
+    <div class="wra-content">
+        <div class="form-container">
+            <form action="" method="post" class="form">
+                {% csrf_token %}
+                {{form.as_p}}
+            
+                <button type="submit" class="btn btn-primary">Add to task</button>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
